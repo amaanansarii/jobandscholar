@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #1a3c6e;
+  --primary-dark: #0f2547;
+  --primary-light: #2d5ba3;
+  --accent: #e85d04;
+  --accent-light: #f48c06;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.container-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.ticker-wrap { overflow: hidden; white-space: nowrap; }
+.ticker-move { display: inline-block; animation: ticker 35s linear infinite; }
+.ticker-move:hover { animation-play-state: paused; }
+@keyframes ticker {
+  0% { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+
+.card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(26,60,110,0.12); }
+
+.badge-new { background: #dcfce7; color: #166534; }
+.badge-hot { background: #fee2e2; color: #991b1b; }
+.badge-upcoming { background: #dbeafe; color: #1e40af; }
+
+.section-title { position: relative; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+.section-title::after { content: ''; position: absolute; bottom: 0; left: 0; width: 60px; height: 3px; background: linear-gradient(90deg, #e85d04, #f48c06); border-radius: 2px; }
+
+.detail-table { border-collapse: collapse; width: 100%; }
+.detail-table td { padding: 0.6rem 1rem; border: 1px solid #e2e8f0; vertical-align: top; }
+.detail-table tr:nth-child(even) td { background: #f8fafc; }
+.detail-table td:first-child { font-weight: 600; color: #1a3c6e; width: 40%; background: #eff6ff; }
+
+.prose-content { white-space: pre-line; line-height: 1.8; }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.mobile-menu-enter { animation: slideDown 0.2s ease; }
