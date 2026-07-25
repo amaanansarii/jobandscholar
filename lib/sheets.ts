@@ -8,10 +8,14 @@ import { Notification } from '@/types';
 // Vacancy Details, Selection Process, Exam Pattern, Syllabus, Official Notification Link,
 // Apply Link, Official Website Link, Admit Card Link, Result Link, Status, Featured
 
-const SHEET_ID = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID || 'YOUR_GOOGLE_SHEET_ID';
-const SHEET_NAME = process.env.NEXT_PUBLIC_SHEET_NAME || 'Sheet1';
+const SHEET_ID = process.env.NEXT_PUBLIC_GOOGLE_SHEET_ID || '';
 
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
+// Supports both published CSV URLs (2PACX-...) and regular Sheet IDs
+const SHEET_URL = SHEET_ID.startsWith('2PACX')
+  ? `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?gid=0&single=true&output=csv`
+  : SHEET_ID
+    ? `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`
+    : '';
 
 function parseCSV(text: string): string[][] {
   const rows: string[][] = [];
@@ -66,15 +70,16 @@ function rowToNotification(row: string[]): Notification {
 }
 
 export async function fetchAllNotifications(): Promise<Notification[]> {
+  if (!SHEET_URL) return getDemoData();
   try {
     const res = await fetch(SHEET_URL, { next: { revalidate: 300 } });
-    if (!res.ok) throw new Error('Sheet fetch failed');
+    if (!res.ok) throw new Error(`Sheet fetch failed: ${res.status}`);
     const text = await res.text();
     const rows = parseCSV(text);
-    // Skip header row
-    return rows.slice(1).filter(r => r[0]).map(rowToNotification);
-  } catch {
-    // Return demo data when sheet isn't configured
+    const data = rows.slice(1).filter(r => r[0]).map(rowToNotification);
+    return data.length > 0 ? data : getDemoData();
+  } catch (e) {
+    console.error('[sheets] fetch error:', e);
     return getDemoData();
   }
 }
